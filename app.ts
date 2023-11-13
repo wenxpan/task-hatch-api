@@ -1,6 +1,7 @@
 import { dbConnect } from "./db/db"
 import taskRoutes from "./routes/task_routes"
 import express, { Request, Response } from "express"
+import verifyAPI from "./utils/authAPI"
 // import cors from "cors"
 
 const app = express()
@@ -16,6 +17,7 @@ const app = express()
 
 // return parsed json in req.body
 app.use(express.json())
+app.use(verifyAPI)
 
 app.get("/", (req: Request, res: Response) => res.send({ info: "Task Hatch!" }))
 

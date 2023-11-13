@@ -12,9 +12,10 @@ router.get("/", async (req: Request, res: Response) => {
 // create new task
 router.post("/", async (req: Request, res: Response) => {
   try {
-    const user = await UserModel.find({ name: "User" })
+    // add to default user
+    const user = await UserModel.findOne({ username: "User" })
     const taskData: TaskInput = { ...req.body, user }
-    const insertedTask = await TaskModel.create(taskData) // Ensure req.body matches the expected type
+    const insertedTask = await TaskModel.create(taskData)
     res.status(201).send(insertedTask)
   } catch (err: any) {
     res.status(500).send({ error: err.message })
