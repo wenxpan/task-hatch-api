@@ -1,35 +1,12 @@
 import * as bcrypt from "bcryptjs"
-import { dbClose } from "./db"
-import { TaskModel } from "../models/task_model"
-import { UserModel } from "../models/user_model"
+import { dbConnect, dbClose } from "./db"
+import { TaskModel, TaskInput } from "../models/task_model"
+import { UserModel, UserInput } from "../models/user_model"
 
-type ProgressInput = {
-  date: Date
-  description: string
-}
-
-type TaskInput = {
-  title: string
-  dateAdded: Date
-  isCompleted: boolean
-  isArchived: boolean
-  delayReason?: string
-  doReason?: string
-  notes?: string
-  tags: string[]
-  progress: ProgressInput[]
-  user: object
-}
-
-type UserInput = {
-  username: string
-  email: string
-  password: string
-  isAdmin: boolean
-}
-
-async function seedDb() {
+async function seedDB() {
   try {
+    await dbConnect()
+
     const salt = await bcrypt.genSalt(10)
 
     const users: UserInput[] = [
@@ -121,4 +98,4 @@ async function seedDb() {
   }
 }
 
-seedDb()
+seedDB()

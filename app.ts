@@ -1,3 +1,4 @@
+import { dbConnect } from "./db/db"
 import taskRoutes from "./routes/task_routes"
 import express, { Request, Response } from "express"
 // import cors from "cors"
@@ -19,5 +20,13 @@ app.use(express.json())
 app.get("/", (req: Request, res: Response) => res.send({ info: "Task Hatch!" }))
 
 app.use("/tasks", taskRoutes)
+
+dbConnect()
+  .then(() => {
+    console.log("DB connected!")
+  })
+  .catch((err) => {
+    console.error("DB failed to connect:", err)
+  })
 
 export default app

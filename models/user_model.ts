@@ -7,6 +7,13 @@ interface IUser extends Document {
   isAdmin: boolean
 }
 
+type UserInput = {
+  username: string
+  email: string
+  password: string
+  isAdmin: boolean
+}
+
 const userSchema: Schema<IUser> = new Schema({
   username: { type: String, required: [true, "Please add username"] },
   email: { type: String, required: [true, "Please add email address"] },
@@ -22,4 +29,4 @@ const userSchema: Schema<IUser> = new Schema({
 
 const UserModel: Model<IUser> = mongoose.model<IUser>("User", userSchema)
 
-export { UserModel, IUser }
+export { UserModel, IUser, UserInput }
