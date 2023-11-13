@@ -1,6 +1,6 @@
 import taskRoutes from "./routes/task_routes"
 import express, { Request, Response } from "express"
-import cors from "cors"
+// import cors from "cors"
 
 const app = express()
 
