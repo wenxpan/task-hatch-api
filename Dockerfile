@@ -16,9 +16,10 @@ RUN ls dist
 
 # environment variables
 ENV PORT=4001
-ENV NODE_ENV='production'
+ENV NODE_ENV="production"
 ENV ATLAS_DB_URL_DEV="db-url"
 ENV API_KEY="api-key"
+ENV FRONTEND_ORIGIN=""
 
 EXPOSE 4001
 

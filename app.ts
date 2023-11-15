@@ -2,18 +2,18 @@ import { dbConnect } from "./db/db"
 import taskRoutes from "./routes/task_routes"
 import express, { Request, Response } from "express"
 import verifyAPI from "./utils/authAPI"
-// import cors from "cors"
+import cors from "cors"
 
 const app = express()
 
-// const corsOptions: cors.CorsOptions = {
-//   origin: "http://127.0.0.1:5173", // app's origin
-//   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-//   credentials: true, // required to pass
-//   optionsSuccessStatus: 204
-// }
+const corsOptions: cors.CorsOptions = {
+  origin: process.env.FRONTEND_ORIGIN, // app's origin
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true, // required to pass
+  optionsSuccessStatus: 204
+}
 
-// app.use(cors(corsOptions))
+app.use(cors(corsOptions))
 
 // return parsed json in req.body
 app.use(express.json())
