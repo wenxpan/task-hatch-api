@@ -33,8 +33,6 @@ async function seedDB() {
       {
         title: "Finish reading Phoenix Project",
         dateAdded: new Date("2023-08-08"),
-        isCompleted: false,
-        isArchived: false,
         delayReason:
           "I'm reading other books right now, don't have time for this",
         doReason: "I can learn more about project management",
@@ -55,8 +53,6 @@ async function seedDB() {
       {
         title: "Complete JavaScript Course",
         dateAdded: new Date("2023-08-08"),
-        isCompleted: false,
-        isArchived: false,
         delayReason: "I've been focusing on other programming languages",
         doReason: "Improving my web development skills",
         notes: "Course platform: udemy.com/js-course",
@@ -76,8 +72,6 @@ async function seedDB() {
       {
         title: "Learn Japanese",
         dateAdded: new Date("2023-07-15"),
-        isCompleted: true,
-        isArchived: false,
         delayReason: "Need to explore different courses",
         doReason: "Want to visit Japan next year",
         notes: "",

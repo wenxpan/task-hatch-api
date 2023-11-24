@@ -8,6 +8,7 @@ interface IProgress extends Document {
 interface ITask extends Document {
   title: string
   dateAdded: Date
+  isPinned: boolean
   isCompleted: boolean
   isArchived: boolean
   delayReason?: string
@@ -26,8 +27,6 @@ type ProgressInput = {
 type TaskInput = {
   title: string
   dateAdded: Date
-  isCompleted: boolean
-  isArchived: boolean
   delayReason?: string
   doReason?: string
   notes?: string
@@ -42,8 +41,9 @@ const progressSchema: Schema<IProgress> = new Schema({
 })
 
 const taskSchema: Schema<ITask> = new Schema({
-  title: { type: String, required: [true, "Please add title"] },
+  title: { type: String, required: [true, "Please add title"], unique: true },
   dateAdded: { type: Date, default: Date.now },
+  isPinned: { type: Boolean, default: false },
   isCompleted: { type: Boolean, default: false },
   isArchived: { type: Boolean, default: false },
   delayReason: { type: String },

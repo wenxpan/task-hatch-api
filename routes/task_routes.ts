@@ -39,9 +39,36 @@ router.get("/:id", async (req: Request, res: Response) => {
 // update task
 router.put("/:id", async (req: Request, res: Response) => {
   try {
+    // check if task needs to be pinned
+    if (req.body.isPinned) {
+      const pinnedTotal = await TaskModel.countDocuments({ isPinned: true })
+      if (pinnedTotal > 2) {
+        res.status(400).send({ error: "Cannot pin more than 2 tasks" })
+      }
+    }
     const task = await TaskModel.findByIdAndUpdate(req.params.id, req.body, {
       new: true
     })
+    if (task) {
+      res.send(task)
+    } else {
+      res.status(404).send({ error: "Task not found" })
+    }
+  } catch (err: any) {
+    res.status(500).send({ error: err.message })
+  }
+})
+
+// pin task
+router.put("/:id/pin", async (req: Request, res: Response) => {
+  try {
+    const task = await TaskModel.findByIdAndUpdate(
+      req.params.id,
+      { isPinned: true },
+      {
+        new: true
+      }
+    )
     if (task) {
       res.send(task)
     } else {
