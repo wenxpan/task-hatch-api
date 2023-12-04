@@ -6,6 +6,7 @@ import cors from "cors"
 
 const app = express()
 
+console.log("frontend path", process.env.FRONTEND_ORIGIN)
 const corsOptions: cors.CorsOptions = {
   origin: process.env.FRONTEND_ORIGIN, // app's origin
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
