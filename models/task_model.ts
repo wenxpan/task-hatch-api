@@ -8,9 +8,7 @@ interface IProgress extends Document {
 interface ITask extends Document {
   title: string
   dateAdded: Date
-  isPinned: boolean
-  isCompleted: boolean
-  isArchived: boolean
+  status: "in progress" | "prioritised" | "completed" | "snoozed" | "archived"
   delayReason?: string
   doReason?: string
   notes?: string
@@ -43,9 +41,11 @@ const progressSchema: Schema<IProgress> = new Schema({
 const taskSchema: Schema<ITask> = new Schema({
   title: { type: String, required: [true, "Please add title"], unique: true },
   dateAdded: { type: Date, default: Date.now },
-  isPinned: { type: Boolean, default: false },
-  isCompleted: { type: Boolean, default: false },
-  isArchived: { type: Boolean, default: false },
+  status: {
+    type: String,
+    enum: ["in progress", "prioritised", "completed", "snoozed", "archived"],
+    default: "in progress"
+  },
   delayReason: { type: String },
   doReason: { type: String },
   notes: { type: String },
