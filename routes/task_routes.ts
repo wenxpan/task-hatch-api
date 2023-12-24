@@ -42,6 +42,7 @@ router.put("/:id", async (req: Request, res: Response) => {
     if (req.body.status === "prioritised") {
       // Check if more than 2 tasks are already pinned
       const pinnedTasksCount = await TaskModel.countDocuments({
+        _id: { $ne: req.params.id },
         status: "prioritised"
       })
       if (pinnedTasksCount >= 2) {

@@ -1,5 +1,6 @@
 import { dbConnect } from "./db/db"
 import taskRoutes from "./routes/task_routes"
+import tagRoutes from "./routes/tag_routes"
 import express, { Request, Response } from "express"
 import verifyAPI from "./utils/authAPI"
 import cors from "cors"
@@ -23,6 +24,7 @@ app.use(verifyAPI)
 app.get("/", (req: Request, res: Response) => res.send({ info: "Task Hatch!" }))
 
 app.use("/tasks", taskRoutes)
+app.use("/tags", tagRoutes)
 
 dbConnect()
   .then(() => {
