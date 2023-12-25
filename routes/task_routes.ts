@@ -1,4 +1,4 @@
-import { TaskModel, TaskInput } from "../models/task_model"
+import { TaskModel, TaskInput, IProgress } from "../models/task_model"
 import { Router, Request, Response } from "express"
 import { UserModel } from "../models/user_model"
 
@@ -50,6 +50,12 @@ router.put("/:id", async (req: Request, res: Response) => {
       }
     }
 
+    if (req.body.progress.length > 1) {
+      req.body.progress.sort(
+        (a: IProgress, b: IProgress) =>
+          new Date(a.date).getTime() - new Date(b.date).getTime()
+      )
+    }
     const updatedTask = await TaskModel.findByIdAndUpdate(
       req.params.id,
       req.body,

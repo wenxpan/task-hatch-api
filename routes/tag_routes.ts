@@ -5,7 +5,9 @@ const router = Router()
 
 router.get("/", async (req: Request, res: Response) => {
   try {
+    // find unique tags that are not archived
     const tags = await TaskModel.aggregate([
+      { $match: { status: { $ne: "archived" } } },
       { $unwind: "$tags" },
       { $group: { _id: "$tags" } },
       { $sort: { _id: 1 } }
