@@ -35,7 +35,11 @@ type TaskInput = {
 
 const progressSchema: Schema<IProgress> = new Schema({
   date: { type: Date, default: Date.now },
-  description: { type: String, required: [true, "Please add description"] }
+  description: {
+    type: String,
+    required: [true, "Please add description"],
+    minLength: [1, "Progress description can't be empty"]
+  }
 })
 
 const taskSchema: Schema<ITask> = new Schema({

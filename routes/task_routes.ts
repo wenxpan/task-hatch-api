@@ -1,4 +1,4 @@
-import { TaskModel, TaskInput, IProgress } from "../models/task_model"
+import { TaskModel, TaskInput, ProgressInput } from "../models/task_model"
 import { Router, Request, Response } from "express"
 import { UserModel } from "../models/user_model"
 
@@ -50,9 +50,22 @@ router.put("/:id", async (req: Request, res: Response) => {
       }
     }
 
-    if (req.body.progress.length > 1) {
-      req.body.progress.sort(
-        (a: IProgress, b: IProgress) =>
+    // check for empty strings in progress desc
+    const progressEntries = req.body.progress as ProgressInput[]
+    if (
+      progressEntries.some(
+        (entry) => !entry.description || entry.description.trim() === ""
+      )
+    ) {
+      return res
+        .status(400)
+        .send({ error: "Progress description cannot be empty" })
+    }
+
+    // sort progress
+    if (progressEntries.length > 1) {
+      progressEntries.sort(
+        (a: ProgressInput, b: ProgressInput) =>
           new Date(a.date).getTime() - new Date(b.date).getTime()
       )
     }
