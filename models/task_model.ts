@@ -9,6 +9,7 @@ interface ITask extends Document {
   title: string
   dateAdded: Date
   status: "in progress" | "prioritised" | "completed" | "snoozed" | "archived"
+  snoozeUntil?: Date
   delayReason?: string
   doReason?: string
   notes?: string
@@ -50,6 +51,7 @@ const taskSchema: Schema<ITask> = new Schema({
     enum: ["in progress", "prioritised", "completed", "snoozed", "archived"],
     default: "in progress"
   },
+  snoozeUntil: { type: Date },
   delayReason: { type: String },
   doReason: { type: String },
   notes: { type: String },

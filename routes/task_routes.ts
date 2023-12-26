@@ -50,6 +50,12 @@ router.put("/:id", async (req: Request, res: Response) => {
       }
     }
 
+    // snooze task for 21 days
+    if (req.body.status === "snoozed") {
+      const snoozeDuration = 21 * 24 * 60 * 60 * 1000
+      req.body.snoozeUntil = new Date(Date.now() + snoozeDuration)
+    }
+
     // check for empty strings in progress desc
     const progressEntries = req.body.progress as ProgressInput[]
     if (

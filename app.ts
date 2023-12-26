@@ -5,6 +5,7 @@ import userRoutes from "./routes/user_routes"
 import express, { Request, Response } from "express"
 import verifyAPI from "./utils/authAPI"
 import cors from "cors"
+import { startCronJobs } from "./utils/taskCronJobs"
 
 const app = express()
 
@@ -31,6 +32,7 @@ app.use("/users", userRoutes)
 dbConnect()
   .then(() => {
     console.log("DB connected!")
+    startCronJobs()
   })
   .catch((err) => {
     console.error("DB failed to connect:", err)
