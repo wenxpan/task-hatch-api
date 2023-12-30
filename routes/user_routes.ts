@@ -4,6 +4,7 @@ import { UserModel } from "../models/user_model"
 
 const router = Router()
 
+// get all users
 router.get("/", async (req: Request, res: Response) => {
   try {
     const users = await UserModel.find()

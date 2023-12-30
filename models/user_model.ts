@@ -15,8 +15,16 @@ type UserInput = {
 }
 
 const userSchema: Schema<IUser> = new Schema({
-  username: { type: String, required: [true, "Please add username"] },
-  email: { type: String, required: [true, "Please add email address"] },
+  username: {
+    type: String,
+    required: [true, "Please add username"],
+    unique: true
+  },
+  email: {
+    type: String,
+    required: [true, "Please add email address"],
+    unique: true
+  },
   password: {
     type: String,
     required: [true, "Please add password"],
