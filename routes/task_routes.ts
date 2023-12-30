@@ -13,7 +13,7 @@ router.get("/", async (req: Request, res: Response) => {
 router.post("/", async (req: Request, res: Response) => {
   try {
     // add to default user
-    const user = await UserModel.findOne({ username: "User" })
+    const user = await UserModel.findOne({ username: "DemoUser" })
     const taskData: TaskInput = { ...req.body, user }
     const insertedTask = await TaskModel.create(taskData)
     res.status(201).send(insertedTask)

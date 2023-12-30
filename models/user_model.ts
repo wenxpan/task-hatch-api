@@ -21,8 +21,8 @@ const userSchema: Schema<IUser> = new Schema({
     type: String,
     required: [true, "Please add password"],
     minLength: [6, "Password must be longer than 6 characters"],
-    maxLength: [128, "Password must be shorter than 128 characters"]
-    // select: false
+    maxLength: [128, "Password must be shorter than 128 characters"],
+    select: false
   },
   isAdmin: { type: Boolean, default: false }
 })

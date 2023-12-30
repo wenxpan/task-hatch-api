@@ -1,9 +1,20 @@
 import { TaskModel } from "../models/task_model"
 import { Request, Response, Router } from "express"
+import { UserModel } from "../models/user_model"
 
 const router = Router()
 
+router.get("/", async (req: Request, res: Response) => {
+  try {
+    const users = await UserModel.find()
+    res.json(users)
+  } catch (err) {
+    res.status(500).json({ message: (err as Error).message })
+  }
+})
+
 router.get("/stats", async (req: Request, res: Response) => {
+  // TODO: add user filter
   try {
     const totalTasks = await TaskModel.countDocuments()
     const tasksCompleted = await TaskModel.countDocuments({

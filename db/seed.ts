@@ -11,8 +11,8 @@ async function seedDB() {
 
     const users: UserInput[] = [
       {
-        username: "User",
-        password: await bcrypt.hash("Demouser", salt),
+        username: "DemoUser",
+        password: await bcrypt.hash("Testingdemouser", salt),
         email: "demo@gmail.com",
         isAdmin: false
       },
