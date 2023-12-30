@@ -2,6 +2,8 @@ import { Request, Response, Router } from "express"
 import { UserModel } from "../models/user_model"
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
+import { generateUserStats, generateUserTags } from "../utils/generateUserStats"
+import { TaskModel } from "../models/task_model"
 
 const router = Router()
 
@@ -54,24 +56,29 @@ router.post("/login", async (req: Request, res: Response) => {
   try {
     const user = await UserModel.findOne({ email }).select("+password")
 
-    // Check the password if user is found
-    if (user) {
-      const isPasswordMatch = await bcrypt.compare(password, user.password)
-      // Return jwt token if password is correct
-      if (isPasswordMatch) {
-        const token = jwt.sign(
-          { id: user._id },
-          process.env.JWT_SECRET as string,
-          {
-            expiresIn: process.env.JWT_EXPIRE
-          }
-        )
-        const returnedUser = await UserModel.findOne({ email })
-        return res.status(200).json({ token, user: returnedUser })
-      }
+    if (!user) {
       return res.status(400).send("Invalid credentials.")
     }
-    return res.status(404).send({ error: "User not found." })
+
+    const isPasswordMatch = await bcrypt.compare(password, user.password)
+
+    if (!isPasswordMatch) {
+      return res.status(404).send({ error: "User not found." })
+    }
+
+    // send token and info to user
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET as string, {
+      expiresIn: process.env.JWT_EXPIRE
+    })
+
+    const info = {
+      token,
+      user: await UserModel.findOne({ email }),
+      tasks: await TaskModel.find({ user: user._id }),
+      stats: await generateUserStats(user._id),
+      tags: await generateUserTags(user._id)
+    }
+    return res.status(200).json(info)
   } catch (err) {
     return res.status(500).send({ error: (err as Error).message })
   }

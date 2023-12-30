@@ -26,7 +26,7 @@ const verifyJWT = async (req: Request, res: Response, next: NextFunction) => {
 }
 
 const adminRequired = (req: Request, res: Response, next: NextFunction) => {
-  if (req.user?.isAdmin) {
+  if (req.user!.isAdmin) {
     next()
   } else {
     res.status(403).send({ error: "Unauthorized access - Admin only" })
@@ -46,9 +46,9 @@ const adminOrOwnerRequired = async (
   }
 
   // check if requested user is the task owner
-  const isOwner = task.user.toString() === req.user?._id.toString()
+  const isOwner = task.user.toString() === req.user!._id.toString()
 
-  if (isOwner || req.user?.isAdmin) {
+  if (isOwner || req.user!.isAdmin) {
     return next()
   } else {
     return res

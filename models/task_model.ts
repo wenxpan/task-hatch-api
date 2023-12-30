@@ -44,7 +44,7 @@ const progressSchema: Schema<IProgress> = new Schema({
 })
 
 const taskSchema: Schema<ITask> = new Schema({
-  title: { type: String, required: [true, "Please add title"], unique: true },
+  title: { type: String, required: [true, "Please add title"] },
   dateAdded: { type: Date, default: Date.now },
   status: {
     type: String,
@@ -59,6 +59,8 @@ const taskSchema: Schema<ITask> = new Schema({
   progress: [progressSchema],
   user: { type: mongoose.Types.ObjectId, ref: "User", required: true }
 })
+
+taskSchema.index({ title: 1, user: 1 }, { unique: true })
 
 const TaskModel: Model<ITask> = mongoose.model<ITask>("Task", taskSchema)
 

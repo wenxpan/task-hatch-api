@@ -4,9 +4,9 @@ import tagRoutes from "./routes/tag_routes"
 import userRoutes from "./routes/user_routes"
 import authRoutes from "./routes/auth_routes"
 import express, { Request, Response } from "express"
-import verifyAPI from "./utils/authAPI"
 import cors from "cors"
 import { startCronJobs } from "./utils/taskCronJobs"
+import { verifyJWT } from "./utils/authJWT"
 
 const app = express()
 
@@ -22,14 +22,18 @@ app.use(cors(corsOptions))
 
 // return parsed json in req.body
 app.use(express.json())
-app.use(verifyAPI)
+
+// Auth (Register and Login) - don't need JWT middleware
+app.use("/auth", authRoutes)
+
+// verify JWT identity and add req.user
+app.use(verifyJWT)
 
 app.get("/", (req: Request, res: Response) => res.send({ info: "Task Hatch!" }))
 
 app.use("/tasks", taskRoutes)
 app.use("/tags", tagRoutes)
 app.use("/users", userRoutes)
-app.use("/auth", authRoutes)
 
 dbConnect()
   .then(() => {

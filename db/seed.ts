@@ -17,6 +17,12 @@ async function seedDB() {
         isAdmin: false
       },
       {
+        username: "RegisteredUser",
+        password: await bcrypt.hash("Testinguser", salt),
+        email: "user@gmail.com",
+        isAdmin: true
+      },
+      {
         username: "Admin",
         password: await bcrypt.hash("Testingadmin", salt),
         email: "admin@gmail.com",
