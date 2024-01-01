@@ -57,4 +57,22 @@ const adminOrOwnerRequired = async (
   }
 }
 
-export { verifyJWT, adminRequired, adminOrOwnerRequired }
+const generateAccessToken = (userId: string) => {
+  return jwt.sign({ id: userId }, process.env.JWT_SECRET as string, {
+    expiresIn: process.env.JWT_EXPIRE
+  })
+}
+
+const generateRefreshToken = (userId: string) => {
+  return jwt.sign({ id: userId }, process.env.REFRESH_TOKEN_SECRET as string, {
+    expiresIn: process.env.REFRESH_TOKEN_EXPIRE
+  })
+}
+
+export {
+  verifyJWT,
+  adminRequired,
+  adminOrOwnerRequired,
+  generateAccessToken,
+  generateRefreshToken
+}

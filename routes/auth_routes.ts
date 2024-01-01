@@ -1,9 +1,10 @@
 import { Request, Response, Router } from "express"
 import { UserModel } from "../models/user_model"
 import bcrypt from "bcryptjs"
-import jwt from "jsonwebtoken"
+import jwt, { VerifyErrors } from "jsonwebtoken"
 import { generateUserStats, generateUserTags } from "../utils/generateUserStats"
 import { TaskModel } from "../models/task_model"
+import { generateAccessToken, generateRefreshToken } from "../utils/authJWT"
 
 const router = Router()
 
@@ -26,17 +27,20 @@ router.post("/register", async (req: Request, res: Response) => {
     // Return user without password
     const returnedUser = await UserModel.findById(newUser._id)
 
-    // Generate a JWT token for the new user
-    const token = jwt.sign(
-      { id: newUser._id },
-      process.env.JWT_SECRET as string,
-      {
-        expiresIn: process.env.JWT_EXPIRE
-      }
-    )
+    // Generate JWT access and refresh token for the new user
+    const accessToken = generateAccessToken(newUser._id)
+    const refreshToken = generateRefreshToken(newUser._id)
+
+    // save refresh token in http-only cookie
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
+    })
 
     return res.status(201).json({
-      token,
+      accessToken,
       user: returnedUser
     })
   } catch (err) {
@@ -66,13 +70,21 @@ router.post("/login", async (req: Request, res: Response) => {
       return res.status(404).send({ error: "User not found." })
     }
 
-    // send token and info to user
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET as string, {
-      expiresIn: process.env.JWT_EXPIRE
+    // Generate JWT access and refresh token for the logged in user
+    const accessToken = generateAccessToken(user._id)
+    const refreshToken = generateRefreshToken(user._id)
+
+    // save refresh token in http-only cookie
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
     })
 
+    // info for loading site
     const info = {
-      token,
+      accessToken,
       user: await UserModel.findOne({ email }),
       tasks: await TaskModel.find({ user: user._id }),
       stats: await generateUserStats(user._id),
@@ -82,6 +94,43 @@ router.post("/login", async (req: Request, res: Response) => {
   } catch (err) {
     return res.status(500).send({ error: (err as Error).message })
   }
+})
+
+// get access token using refresh token
+router.post("/refresh_token", async (req: Request, res: Response) => {
+  const refreshToken = req.cookies.refreshToken
+  if (!refreshToken) {
+    return res.status(401).send({ error: "refresh token missing" })
+  }
+
+  jwt.verify(
+    refreshToken,
+    process.env.REFRESH_TOKEN_SECRET as string,
+    async (err: VerifyErrors | null, decoded: any) => {
+      if (err) {
+        return res.status(403).send({ error: "invalid refresh token" })
+      }
+
+      const userId = decoded.id
+      const accessToken = generateAccessToken(userId)
+
+      const info = {
+        accessToken,
+        user: await UserModel.findById(userId),
+        tasks: await TaskModel.find({ user: userId }),
+        stats: await generateUserStats(userId),
+        tags: await generateUserTags(userId)
+      }
+
+      return res.json(info)
+    }
+  )
+  return
+})
+
+router.post("/logout", (req: Request, res: Response) => {
+  res.clearCookie("refreshToken")
+  res.sendStatus(200)
 })
 
 export default router

@@ -1,10 +1,11 @@
+import cookieParser from "cookie-parser"
+import express, { Request, Response } from "express"
+import cors from "cors"
 import { dbConnect } from "./db/db"
 import taskRoutes from "./routes/task_routes"
 import tagRoutes from "./routes/tag_routes"
 import userRoutes from "./routes/user_routes"
 import authRoutes from "./routes/auth_routes"
-import express, { Request, Response } from "express"
-import cors from "cors"
 import { startCronJobs } from "./utils/taskCronJobs"
 import { verifyJWT } from "./utils/authJWT"
 
@@ -19,6 +20,7 @@ const corsOptions: cors.CorsOptions = {
 }
 
 app.use(cors(corsOptions))
+app.use(cookieParser())
 
 // return parsed json in req.body
 app.use(express.json())
