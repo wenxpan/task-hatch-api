@@ -3,9 +3,9 @@ import express, { Request, Response } from "express"
 import cors from "cors"
 import { dbConnect } from "./db/db"
 import taskRoutes from "./routes/task_routes"
-import tagRoutes from "./routes/tag_routes"
 import userRoutes from "./routes/user_routes"
 import authRoutes from "./routes/auth_routes"
+import meRoutes from "./routes/me_routes"
 import { startCronJobs } from "./utils/taskCronJobs"
 import { verifyJWT } from "./utils/authJWT"
 
@@ -34,8 +34,8 @@ app.use(verifyJWT)
 app.get("/", (req: Request, res: Response) => res.send({ info: "Task Hatch!" }))
 
 app.use("/tasks", taskRoutes)
-app.use("/tags", tagRoutes)
 app.use("/users", userRoutes)
+app.use("/users/me", meRoutes)
 
 dbConnect()
   .then(() => {

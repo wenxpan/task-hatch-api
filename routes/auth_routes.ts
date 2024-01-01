@@ -2,8 +2,6 @@ import { Request, Response, Router } from "express"
 import { UserModel } from "../models/user_model"
 import bcrypt from "bcryptjs"
 import jwt, { VerifyErrors } from "jsonwebtoken"
-import { generateUserStats, generateUserTags } from "../utils/generateUserStats"
-import { TaskModel } from "../models/task_model"
 import { generateAccessToken, generateRefreshToken } from "../utils/authJWT"
 
 const router = Router()
@@ -82,15 +80,9 @@ router.post("/login", async (req: Request, res: Response) => {
       maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
     })
 
-    // info for loading site
-    const info = {
-      accessToken,
-      user: await UserModel.findOne({ email }),
-      tasks: await TaskModel.find({ user: user._id }),
-      stats: await generateUserStats(user._id),
-      tags: await generateUserTags(user._id)
-    }
-    return res.status(200).json(info)
+    const returnedUser = await UserModel.findById(user._id)
+
+    return res.status(200).json({ accessToken, user: returnedUser })
   } catch (err) {
     return res.status(500).send({ error: (err as Error).message })
   }
@@ -113,16 +105,9 @@ router.post("/refresh_token", async (req: Request, res: Response) => {
 
       const userId = decoded.id
       const accessToken = generateAccessToken(userId)
+      const user = await UserModel.findById(userId)
 
-      const info = {
-        accessToken,
-        user: await UserModel.findById(userId),
-        tasks: await TaskModel.find({ user: userId }),
-        stats: await generateUserStats(userId),
-        tags: await generateUserTags(userId)
-      }
-
-      return res.json(info)
+      return res.json({ accessToken, user })
     }
   )
   return
