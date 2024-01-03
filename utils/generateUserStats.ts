@@ -47,6 +47,6 @@ export async function generateUserTags(userId: string) {
     { $group: { _id: "$tags" } },
     { $sort: { _id: 1 } }
   ])
-  const tagsArray = tags.map((tag) => tag._id)
+  const tagsArray: string[] = tags.map((tag) => tag._id)
   return tagsArray
 }
