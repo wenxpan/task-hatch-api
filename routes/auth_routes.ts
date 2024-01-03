@@ -59,13 +59,13 @@ router.post("/login", async (req: Request, res: Response) => {
     const user = await UserModel.findOne({ email }).select("+password")
 
     if (!user) {
-      return res.status(400).send("Invalid credentials.")
+      return res.status(404).send({ error: "User not found." })
     }
 
     const isPasswordMatch = await bcrypt.compare(password, user.password)
 
     if (!isPasswordMatch) {
-      return res.status(404).send({ error: "User not found." })
+      return res.status(400).send("Invalid credentials.")
     }
 
     // Generate JWT access and refresh token for the logged in user
@@ -76,7 +76,7 @@ router.post("/login", async (req: Request, res: Response) => {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: "lax", // 'strict', 'lax'
       maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
     })
 
@@ -91,6 +91,7 @@ router.post("/login", async (req: Request, res: Response) => {
 // get access token using refresh token
 router.post("/refresh_token", async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken
+  console.log({ cookies: req.cookies })
   if (!refreshToken) {
     return res.status(401).send({ error: "refresh token missing" })
   }
