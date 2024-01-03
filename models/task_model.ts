@@ -8,8 +8,8 @@ interface IProgress extends Document {
 interface ITask extends Document {
   title: string
   dateAdded: Date
-  isCompleted: boolean
-  isArchived: boolean
+  status: "in progress" | "prioritised" | "completed" | "snoozed" | "archived"
+  snoozeUntil?: Date
   delayReason?: string
   doReason?: string
   notes?: string
@@ -26,8 +26,6 @@ type ProgressInput = {
 type TaskInput = {
   title: string
   dateAdded: Date
-  isCompleted: boolean
-  isArchived: boolean
   delayReason?: string
   doReason?: string
   notes?: string
@@ -38,14 +36,22 @@ type TaskInput = {
 
 const progressSchema: Schema<IProgress> = new Schema({
   date: { type: Date, default: Date.now },
-  description: { type: String, required: [true, "Please add description"] }
+  description: {
+    type: String,
+    required: [true, "Please add description"],
+    minLength: [1, "Progress description can't be empty"]
+  }
 })
 
 const taskSchema: Schema<ITask> = new Schema({
   title: { type: String, required: [true, "Please add title"] },
   dateAdded: { type: Date, default: Date.now },
-  isCompleted: { type: Boolean, default: false },
-  isArchived: { type: Boolean, default: false },
+  status: {
+    type: String,
+    enum: ["in progress", "prioritised", "completed", "snoozed", "archived"],
+    default: "in progress"
+  },
+  snoozeUntil: { type: Date },
   delayReason: { type: String },
   doReason: { type: String },
   notes: { type: String },
@@ -53,6 +59,8 @@ const taskSchema: Schema<ITask> = new Schema({
   progress: [progressSchema],
   user: { type: mongoose.Types.ObjectId, ref: "User", required: true }
 })
+
+taskSchema.index({ title: 1, user: 1 }, { unique: true })
 
 const TaskModel: Model<ITask> = mongoose.model<ITask>("Task", taskSchema)
 
