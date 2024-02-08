@@ -3,7 +3,7 @@ FROM node:20.9.0-alpine
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY package.json ./
 
 # RUN npm install --only=production
 RUN npm install
@@ -15,11 +15,20 @@ RUN npm run build
 RUN ls dist 
 
 # environment variables
-ENV PORT=4001
 ENV NODE_ENV="production"
-ENV ATLAS_DB_URL_DEV="db-url"
-ENV API_KEY="api-key"
-ENV FRONTEND_ORIGIN=""
+ENV PORT=4001
+
+# provide when building
+ENV ATLAS_DB_URL_DEV=""
+ENV ATLAS_DB_URL_PROD="db-url"
+ENV FRONTEND_ORIGIN_DEV=""
+ENV FRONTEND_ORIGIN_PROD=""
+
+ENV API_KEY="secrectKey"
+ENV JWT_EXPIRE="1h"
+ENV JWT_SECRET="ThisIsASecret"
+ENV REFRESH_TOKEN_EXPIRE="30d"
+ENV REFRESH_TOKEN_SECRET="newnewsecret"
 
 EXPOSE 4001
 
