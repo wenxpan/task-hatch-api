@@ -11,9 +11,13 @@ import { verifyJWT } from "./utils/authJWT"
 
 const app = express()
 
-console.log("frontend path", process.env.FRONTEND_ORIGIN)
+const frontendURL =
+  process.env.NODE_ENV === "production"
+    ? process.env.FRONTEND_ORIGIN_PROD
+    : process.env.FRONTEND_ORIGIN_DEV
+console.log("frontend path", frontendURL)
 const corsOptions: cors.CorsOptions = {
-  origin: process.env.FRONTEND_ORIGIN, // app's origin
+  origin: frontendURL, // app's origin
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true, // required to pass
   optionsSuccessStatus: 204
